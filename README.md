@@ -4,57 +4,86 @@ A comprehensive **Model Context Protocol (MCP) server** for Wiki.js integration 
 
 ## 🚀 Quick Start
 
-### 1. Environment Setup
+### Windows/Docker Users (Recommended)
+For Windows users, we provide a simplified setup with Docker:
+
+1. **Install Docker Desktop** from [docker.com](https://www.docker.com/products/docker-desktop/)
+2. **Clone the repository** and run:
+   ```cmd
+   # Start Wiki.js and database
+   docker-compose up -d
+   
+   # Build MCP server image
+   scripts\build-mcp.bat
+   ```
+3. **Follow the setup wizard** and see [docs/QUICK_INSTALL.md](docs/QUICK_INSTALL.md) for detailed instructions
+
+### Linux/macOS Users
+
+#### 1. Environment Setup
 
 First, clone this repository and set up environment variables:
 ```bash
 # Copy environment template
-cp config/example.env .env
+cp config/env.example .env
 
 # Edit .env with your credentials:
 # - Set POSTGRES_PASSWORD to a secure password
 # - Update other settings as needed
 ```
 
-### 2. Docker Deployment (Recommended)
+#### 2. Docker Deployment (Recommended)
 
 ```bash
-# Start Wiki.js with Docker
-docker-compose -f docker.yml up -d
+# Start Wiki.js and database
+docker-compose up -d db wiki
 ```
 Wiki.js will be available at http://localhost:3000
 
 Complete the initial setup in the web interface
 
-### 3. Setup MCP Server
+#### 3. Build MCP Server
+```bash
+# Build MCP server Docker image
+docker-compose --profile build build mcp-builder
+
+# Or use the build script (Windows)
+scripts\build-mcp.bat
+```
+
+#### 4. Setup MCP Server (Alternative - Direct Python)
 ```bash
 # Install Python dependencies
-./setup.sh
+./scripts/setup.sh
 
 # Update .env with Wiki.js API credentials:
 # - Get API key from Wiki.js admin panel  
 # - Set WIKIJS_TOKEN in .env file
 
 # Test the connection
-./test-server.sh
+./scripts/test-server.sh
 
 # Start MCP server
 # (not needed for AI IDEs like Cursor, simply click on the refresh icon after editing mcp.json
 # and you should see a green dot with all tools listed. In existing open Cursor windows,
 # this refresh is necessary in order to use this MCP)
-./start-server.sh
+./scripts/start-server.sh
 ```
 
-### 4. Configure Cursor MCP
+#### 5. Configure Cursor MCP
 Add to your `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
     "wikijs": {
-      "command": "/path/to/wiki-js-mcp/start-server.sh"
+      "command": "/path/to/wiki-js-mcp/scripts/start-server.sh"
     }
   }
 }
+```
+
+**Alternative: Use Deeplink (Recommended)**
+After running `scripts\build-mcp.bat`, a `cursor-mcp-deeplink.txt` file will be generated. Copy the deeplink from this file and paste it into your browser to automatically configure Cursor MCP.
 ```
 
 ## 🎯 Enhanced Cursor Integration
@@ -114,6 +143,7 @@ These rules ensure that your AI assistant will:
 - **Persistent storage**: Data survives container restarts
 - **Health checks**: Automatic service monitoring
 - **Production-ready**: Optimized for development and deployment
+- **Windows support**: Full Docker Desktop integration
 
 ### 🔍 **Smart Features**
 - **Repository context detection**: Auto-detect Git repositories
@@ -271,9 +301,9 @@ WIKIJS_USERNAME=your_username
 WIKIJS_PASSWORD=your_password
 
 # Database & Logging
-WIKIJS_MCP_DB=./wikijs_mappings.db
+WIKIJS_MCP_DB=./data/mcp/wikijs_mappings.db
 LOG_LEVEL=INFO
-LOG_FILE=wikijs_mcp.log
+LOG_FILE=./logs/wikijs_mcp.log
 
 # Repository Settings
 REPOSITORY_ROOT=./
@@ -319,15 +349,25 @@ wiki-js-mcp/
 ├── src/
 │   └── wiki_mcp_server.py      # Main MCP server implementation
 ├── config/
-│   └── example.env             # Configuration template
-├── docker.yml                  # Docker Compose setup
+│   ├── cursor-mcp.json # MCP configuration for Windows/VS Code
+│   └── env.example             # Configuration template
+├── docs/                       # Project documentation
+│   ├── README.md               # Documentation index
+│   ├── PROJECT_DOCUMENTATION.md # Complete project documentation
+│   ├── PROJECT_OVERVIEW.md     # Project overview
+│   ├── DOCUMENTATION_INDEX.md  # Documentation index
+│   ├── DEVELOPMENT_GUIDE.md    # Development guide
+│   ├── TECHNICAL_SPECIFICATION.md # Technical specification
+│   └── QUICK_INSTALL.md        # Quick installation guide
+├── scripts/                    # Scripts and utilities
+│   ├── build-mcp.bat           # Build MCP Docker image (Windows)
+│   ├── quick-start.bat         # Complete setup (Windows)
+│   ├── *.sh                    # Linux/macOS scripts
+│   └── generate-deeplink.py    # DeepLink generator
+├── docker-compose.yml          # Docker Compose setup
+├── Dockerfile.mcp              # MCP server Dockerfile
 ├── pyproject.toml              # Poetry dependencies
 ├── requirements.txt            # Pip dependencies
-├── setup.sh                    # Environment setup script
-├── start-server.sh             # MCP server launcher
-├── test-server.sh              # Interactive testing script
-├── HIERARCHICAL_FEATURES.md    # Hierarchical documentation guide
-├── DELETION_TOOLS.md           # Deletion and cleanup guide
 ├── LICENSE                     # MIT License
 └── README.md                   # This file
 ```
@@ -344,15 +384,18 @@ wiki-js-mcp/
 ### Docker Issues
 ```bash
 # Check containers
-docker-compose -f docker.yml ps
+docker-compose ps
 
 # View logs
-docker-compose -f docker.yml logs wiki
-docker-compose -f docker.yml logs postgres
+docker-compose logs wiki
+docker-compose logs postgres
 
 # Reset everything
-docker-compose -f docker.yml down -v
-docker-compose -f docker.yml up -d
+docker-compose down -v
+docker-compose up -d
+
+# Rebuild MCP image if needed
+scripts\build-mcp.bat
 ```
 
 ### Connection Issues
@@ -361,24 +404,25 @@ docker-compose -f docker.yml up -d
 curl http://localhost:3000/graphql
 
 # Verify authentication
-./test-server.sh
+./scripts/test-server.sh
 
 # Debug mode
 export LOG_LEVEL=DEBUG
-./start-server.sh
+./scripts/start-server.sh
 ```
 
 ### Common Problems
-- **Port conflicts**: Change port 3000 in `docker.yml` if needed
+- **Port conflicts**: Change port 3000 in `docker-compose.yml` if needed
 - **Database issues**: Remove `postgres_data/` and restart
 - **API permissions**: Ensure API key has admin privileges
-- **Python dependencies**: Run `./setup.sh` to reinstall
+- **Python dependencies**: Run `./scripts/setup.sh` to reinstall
+- **MCP connection issues**: Use deeplink from `cursor-mcp-deeplink.txt` after running `scripts\build-mcp.bat`
 
 ## 📚 Documentation
 
-- **[Hierarchical Features Guide](HIERARCHICAL_FEATURES.md)** - Complete guide to enterprise documentation
-- **[Deletion Tools Guide](DELETION_TOOLS.md)** - Comprehensive deletion and cleanup tools
-- **[Configuration Examples](config/example.env)** - Environment setup
+- **[Quick Installation Guide](docs/QUICK_INSTALL.md)** - Complete setup guide for all platforms
+- **[Project Documentation](docs/)** - Complete project documentation and guides
+- **[Configuration Examples](config/env.example)** - Environment setup
 
 ## 🤝 Contributing
 

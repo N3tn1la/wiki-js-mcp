@@ -1,4 +1,7 @@
+version: '3.8'
+
 services:
+  # PostgreSQL Database
   db:
     image: postgres:15-alpine
     container_name: wikijs_db
@@ -6,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-wikijs}
       POSTGRES_USER: ${POSTGRES_USER:-wikijs}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wikijsrocks1}
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,7 +17,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+    networks:
+      - wikijs_network
 
+  # Wiki.js Application
   wiki:
     image: ghcr.io/requarks/wiki:2
     container_name: wikijs_app
@@ -29,15 +35,37 @@ services:
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: ${POSTGRES_USER:-wikijs}
-      DB_PASS: ${POSTGRES_PASSWORD}
+      DB_PASS: ${POSTGRES_PASSWORD:-wikijsrocks1}
       DB_NAME: ${POSTGRES_DB:-wikijs}
       PORT: 3000
+      # Отключаем внешние запросы для локализации
+      DISABLE_GRAPH_SYNC: true
+      DISABLE_LOCALE_SYNC: true
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/healthz"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
+    volumes:
+      - ./data/sideload:/wiki/data/sideload
+      - ./data/docs:/wiki/data/docs
+    networks:
+      - wikijs_network
+
+  # MCP Server (только для сборки образа)
+  mcp-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    image: wikijs-mcp:latest
+    container_name: wikijs_mcp_builder
+    profiles:
+      - build
 
 volumes:
   db_data:
+
+networks:
+  wikijs_network:
+    driver: bridge

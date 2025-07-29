@@ -1,0 +1,18 @@
+🔗 Deeplink для добавления Wiki.js MCP в Cursor
+
+Скопируйте и вставьте эту ссылку в браузер для автоматического добавления MCP сервера:
+
+cursor://mcp/add?config=eyJtY3BTZXJ2ZXJzIjp7Indpa2lqcyI6eyJjb21tYW5kIjoiZG9ja2VyIiwiYXJncyI6WyJydW4iLCItLXJtIiwiLWkiLCItLW5ldHdvcmsiLCJ3aWtpLWpzLW1jcF93aWtpanNfbmV0d29yayIsIi1lIiwiV0lLSUpTX0FQSV9VUkw9aHR0cDovL3dpa2k6MzAwMCIsIi1lIiwiV0lLSUpTX1RPS0VOPSR7V0lLSUpTX1RPS0VOfSIsIi1lIiwiV0lLSUpTX01DUF9EQj0vYXBwL2RhdGEvd2lraWpzX21hcHBpbmdzLmRiIiwiLWUiLCJMT0dfTEVWRUw9SU5GTyIsIi1lIiwiUkVQT1NJVE9SWV9ST09UPS93b3Jrc3BhY2UiLCItZSIsIkRFRkFVTFRfU1BBQ0VfTkFNRT1Eb2N1bWVudGF0aW9uIiwiLWUiLCJERUZBVUxUX0xPQ0FMRT1lbiIsIi12IiwiJHt3b3Jrc3BhY2VGb2xkZXJ9Oi93b3Jrc3BhY2U6cm8iLCItdiIsIiR7d29ya3NwYWNlRm9sZGVyfS9kYXRhL21jcDovYXBwL2RhdGEiLCItdiIsIiR7d29ya3NwYWNlRm9sZGVyfS9sb2dzOi9hcHAvbG9ncyIsIndpa2lqcy1tY3A6bGF0ZXN0IiwicHl0aG9uIiwic3JjL3dpa2lfbWNwX3NlcnZlci5weSJdfX19
+
+📋 Инструкция:
+1. Скопируйте ссылку выше
+2. Вставьте в адресную строку браузера
+3. Нажмите Enter
+4. Cursor автоматически добавит MCP сервер
+
+⚠️ Важно: Убедитесь, что:
+- Wiki.js сервер запущен
+- Токен настроен в файле .env
+- Docker контейнер wikijs-mcp:latest собран
+
+📖 Подробная документация: README-WINDOWS.md

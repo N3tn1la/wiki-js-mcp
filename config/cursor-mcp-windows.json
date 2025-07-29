@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "wikijs": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--network",
+        "wiki-js-mcp_wikijs_network",
+        "-e",
+        "WIKIJS_API_URL=http://wiki:3000",
+        "-e",
+        "WIKIJS_TOKEN=${WIKIJS_TOKEN}",
+        "-e",
+        "WIKIJS_MCP_DB=/app/data/wikijs_mappings.db",
+        "-e",
+        "LOG_LEVEL=INFO",
+        "-e",
+        "REPOSITORY_ROOT=/workspace",
+        "-e",
+        "DEFAULT_SPACE_NAME=Documentation",
+        "-e",
+        "DEFAULT_LOCALE=ru",
+        "-v",
+        "${workspaceFolder}:/workspace:ro",
+        "-v",
+        "${workspaceFolder}/data/mcp:/app/data",
+        "-v",
+        "${workspaceFolder}/logs:/app/logs",
+        "wikijs-mcp:latest",
+        "python",
+        "src/wiki_mcp_server.py"
+      ]
+    }
+  }
+} 

@@ -1,18 +1,17 @@
-# Environment files
+# Environment variables
 .env
 .env.local
-.env.*.local
+.env.production
 
 # Database files
 *.db
 *.sqlite
 *.sqlite3
-wikijs_mappings.db
+data/mcp/
 
 # Logs
-*.log
 logs/
-wikijs_mcp.log
+*.log
 
 # Python
 __pycache__/
@@ -43,10 +42,6 @@ env/
 ENV/
 env.bak/
 venv.bak/
-.venv/
-
-# Poetry
-poetry.lock
 
 # IDE
 .vscode/
@@ -55,7 +50,7 @@ poetry.lock
 *.swo
 *~
 
-# OS generated files
+# OS
 .DS_Store
 .DS_Store?
 ._*
@@ -64,34 +59,9 @@ poetry.lock
 ehthumbs.db
 Thumbs.db
 
-# Testing
-.coverage
-.pytest_cache/
-.tox/
-.nox/
-htmlcov/
-
-# MyPy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
+# Docker
+.dockerignore
 
 # Temporary files
-tmp/
-temp/
 *.tmp
-*.bak
-*.backup 
-
-# Docker volumes
-postgres_data/
-wikijs_data/
-
-# Resources
-resources/ 
+*.temp 
